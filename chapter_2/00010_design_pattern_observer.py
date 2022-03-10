@@ -24,6 +24,9 @@ class Item:
         self.name = name
         self.value = value
 
+    def __repr__(self):
+        return f"name = {self.name}, value = {self.value}"
+
 
 class ShoppingCart:
     def __init__(self, event_bus: EventBus):
@@ -65,12 +68,12 @@ class Summary:
         for item in self.summary["items"]:
             self.summary["total"] += item.value
 
-        self.event_bus.post_event("price_updated", self.summary["total"])
+        self.event_bus.post_event("price_updated", self.summary)
 
 
 class CashierVisor:
     def __init__(self, event_bus: EventBus):
-        self.msg = "Total: "
+        self.msg = "Summary: "
         self.event_bus = event_bus
         self.event_bus.subscribe("price_updated", self.print)
 
