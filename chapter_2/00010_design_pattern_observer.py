@@ -41,6 +41,9 @@ class ShoppingCart:
         self.items.remove(item)
         self.event_bus.post_event("shopping_cart_item_removed", item)
 
+    def send_order(self):
+        self.event_bus.post_event("order_completed", "end_order!!!")
+
 
 class Summary:
     def __init__(self, event_bus: EventBus):
@@ -81,10 +84,31 @@ class CashierVisor:
         print(self.msg + str(total))
 
 
+class WebSocketVisor:
+    def __init__(self, event_bus: EventBus):
+        self.msg = "Summary (WebSocketVisor): "
+        self.event_bus = event_bus
+        self.event_bus.subscribe("price_updated", self.print)
+
+    def print(self, total: int):
+        print(self.msg + str(total))
+
+
+class Storage:
+    def __init__(self, event_bus: EventBus):
+        self.event_bus = event_bus
+        self.event_bus.subscribe("order_completed", self.update_storage)
+
+    def update_storage(self, order):
+        print(f"update storage {order}")
+
+
 event_bus: EventBus = EventBus()
 shopping_cart: ShoppingCart = ShoppingCart(event_bus)
 summary: Summary = Summary(event_bus)
 cashier: CashierVisor = CashierVisor(event_bus)
+storage: Storage = Storage(event_bus)
+websocket: WebSocketVisor = WebSocketVisor(event_bus)
 
 item1: Item = Item("mickey", 10)
 item2: Item = Item("hulk", 100)
@@ -93,3 +117,6 @@ item3: Item = Item("developer", 1)
 shopping_cart.add_item(item1)
 shopping_cart.add_item(item2)
 shopping_cart.add_item(item3)
+
+
+shopping_cart.send_order()
