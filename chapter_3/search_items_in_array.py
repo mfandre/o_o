@@ -27,8 +27,6 @@ print(f"execution time = {endtime - starttime}")
 # Binary search... 
 def BinSearch(a, x):
    i = bisect.bisect_right(a, x)
-   print("=======")
-   print(i)
    if i != len(a) + 1 and a[i-1] == x:
       return i-1
    else:
